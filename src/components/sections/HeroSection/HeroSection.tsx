@@ -26,4 +26,4 @@ export const HeroSection: React.FC = () => {
       </p>
     </div>
   );
-
+};
