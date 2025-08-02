@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { ResumeMatch } from "../types";
+import { ResumeMatch } from "../types/ResumeMatch";
 
 // This will be replaced with actual API calls to your Flask backend
 export const useResumeMatching = () => {

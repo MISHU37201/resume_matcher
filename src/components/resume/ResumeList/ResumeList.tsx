@@ -1,5 +1,5 @@
 import React from "react";
-import { ResumeMatch } from "../../../types";
+import { ResumeMatch } from "../../../types/ResumeMatch";
 import { ResumeCard } from "../ResumeCard/ResumeCard";
 
 interface ResumeListProps {

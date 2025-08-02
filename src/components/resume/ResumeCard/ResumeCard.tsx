@@ -1,5 +1,5 @@
 import React from "react";
-import { ResumeMatch } from "../../../types";
+import { ResumeMatch } from "../../../types/ResumeMatch";
 import { Star, Clock } from "../../ui/icons";
 import { Button } from "../../ui/Button/Button";
 
