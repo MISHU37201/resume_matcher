@@ -1,5 +1,3 @@
-export default ResumeMatcherApp;
-
 // src/index.tsx - Entry point
 import React from "react";
 import ReactDOM from "react-dom/client";
