@@ -1,8 +1,17 @@
 import React, { useState } from "react";
 import { FileText } from "../../ui/icons";
 
-export const JobDescriptionInput: React.FC = () => {
-  const [value, setValue] = useState("");
+interface JobDescriptionInputProps {
+  value: string;
+  onChange: (value: string) => void;
+  onJDUploaded: (jdId: string) => void;
+}
+
+export const JobDescriptionInput: React.FC<JobDescriptionInputProps> = ({
+  value,
+  onChange,
+  onJDUploaded,
+}) => {
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async () => {
@@ -24,6 +33,11 @@ export const JobDescriptionInput: React.FC = () => {
       });
 
       const data = await res.json();
+
+      if (data.jd_id) {
+        onJDUploaded(data.jd_id);
+      }
+
       alert(data.message || "Uploaded successfully!");
     } catch (err) {
       console.error("Error uploading JD:", err);
@@ -93,7 +107,7 @@ export const JobDescriptionInput: React.FC = () => {
       >
         <textarea
           value={value}
-          onChange={(e) => setValue(e.target.value)}
+          onChange={(e) => onChange(e.target.value)}
           placeholder="Paste your job description here..."
           style={{
             width: "100%",

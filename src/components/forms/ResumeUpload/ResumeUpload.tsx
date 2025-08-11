@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import { Upload, FileText } from "../../ui/icons";
 
 interface ResumeUploadProps {
@@ -10,12 +10,43 @@ export const ResumeUpload: React.FC<ResumeUploadProps> = ({
   uploadedFiles,
   onFileUpload,
 }) => {
+  const [uploading, setUploading] = useState(false);
+
   const handleFileUpload = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
+    async (event: React.ChangeEvent<HTMLInputElement>) => {
       const files = Array.from(event.target.files || []);
-      onFileUpload(files);
+      if (!files.length) return;
+
+      setUploading(true);
+      try {
+        for (const file of files) {
+          const formData = new FormData();
+          formData.append("resume", file);
+
+          const res = await fetch("http://localhost:5000/upload-resume", {
+            method: "POST",
+            body: formData,
+          });
+
+          const data = await res.json();
+          if (!res.ok) {
+            console.error(`Error uploading ${file.name}:`, data.error);
+            alert(`❌ Failed to upload ${file.name}: ${data.error}`);
+          } else {
+            console.log(`✅ Uploaded ${file.name}`, data);
+          }
+        }
+
+        // Update UI with newly uploaded files
+        onFileUpload([...uploadedFiles, ...files]);
+      } catch (err) {
+        console.error("Upload error:", err);
+        alert("An error occurred while uploading resumes.");
+      } finally {
+        setUploading(false);
+      }
     },
-    [onFileUpload]
+    [uploadedFiles, onFileUpload]
   );
 
   return (
@@ -28,6 +59,7 @@ export const ResumeUpload: React.FC<ResumeUploadProps> = ({
         transition: "all 0.3s ease",
       }}
     >
+      {/* Header */}
       <div
         style={{
           display: "flex",
@@ -65,6 +97,8 @@ export const ResumeUpload: React.FC<ResumeUploadProps> = ({
           </p>
         </div>
       </div>
+
+      {/* Upload Box */}
       <div
         style={{
           border: "2px dashed #d1d5db",
@@ -102,13 +136,15 @@ export const ResumeUpload: React.FC<ResumeUploadProps> = ({
               margin: "0 0 8px 0",
             }}
           >
-            Click to upload resumes
+            {uploading ? "Uploading..." : "Click to upload resumes"}
           </p>
           <p style={{ fontSize: "14px", color: "#9ca3af", margin: 0 }}>
             PDF, DOC, DOCX up to 10MB each
           </p>
         </label>
       </div>
+
+      {/* File List */}
       {uploadedFiles.length > 0 && (
         <div style={{ marginTop: "16px" }}>
           <p
@@ -119,7 +155,7 @@ export const ResumeUpload: React.FC<ResumeUploadProps> = ({
               marginBottom: "8px",
             }}
           >
-            {uploadedFiles.length} files selected
+            {uploadedFiles.length} files uploaded
           </p>
           <div
             style={{

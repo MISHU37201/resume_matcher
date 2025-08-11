@@ -14,6 +14,7 @@ import { validateFile, downloadFile } from "./utils/helpers";
 const ResumeMatcherApp: React.FC = () => {
   // State management
   const [jobDescription, setJobDescription] = useState("");
+  const [uploadedJdId, setUploadedJdId] = useState<string | null>(null); // <-- JD ID after upload
   const [uploadedResumes, setUploadedResumes] = useState<File[]>([]);
   const [selectedResumes, setSelectedResumes] = useState(new Set<number>());
   const [filterScore, setFilterScore] = useState(0);
@@ -45,10 +46,23 @@ const ResumeMatcherApp: React.FC = () => {
     setUploadedResumes(validFiles);
   }, []);
 
+  // Handle Job Description text change
+  const handleJobDescriptionChange = useCallback((text: string) => {
+    setJobDescription(text);
+  }, []);
+
+  // Handle JD upload success to get jd_id from backend
+  const handleJDUploaded = useCallback((jdId: string) => {
+    setUploadedJdId(jdId);
+  }, []);
+
   const handleAnalyzeResumes = useCallback(() => {
-    if (!jobDescription.trim()) return;
-    analyzeResumes(jobDescription, uploadedResumes);
-  }, [jobDescription, uploadedResumes, analyzeResumes]);
+    if (!uploadedJdId) {
+      alert("Please upload a job description first!");
+      return;
+    }
+    analyzeResumes(uploadedJdId, uploadedResumes);
+  }, [uploadedJdId, uploadedResumes, analyzeResumes]);
 
   const toggleResumeSelection = useCallback(
     (id: number) => {
@@ -77,7 +91,7 @@ const ResumeMatcherApp: React.FC = () => {
     }
   }, [selectedResumes, api]);
 
-  // Computed values
+  // Filter matched resumes by score threshold
   const filteredMatches = matchedResumes.filter(
     (resume) => resume.score >= filterScore
   );
@@ -118,8 +132,9 @@ const ResumeMatcherApp: React.FC = () => {
           }}
         >
           <JobDescriptionInput
-          // value={jobDescription}
-          // onChange={setJobDescription}
+            value={jobDescription}
+            onChange={handleJobDescriptionChange}
+            onJDUploaded={handleJDUploaded}
           />
           <ResumeUpload
             uploadedFiles={uploadedResumes}
@@ -132,7 +147,7 @@ const ResumeMatcherApp: React.FC = () => {
           <Button
             variant="primary"
             size="lg"
-            disabled={!jobDescription.trim() || isAnalyzing}
+            disabled={!uploadedJdId || isAnalyzing}
             onClick={handleAnalyzeResumes}
           >
             {isAnalyzing ? (
