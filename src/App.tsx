@@ -118,8 +118,8 @@ const ResumeMatcherApp: React.FC = () => {
           }}
         >
           <JobDescriptionInput
-            value={jobDescription}
-            onChange={setJobDescription}
+          // value={jobDescription}
+          // onChange={setJobDescription}
           />
           <ResumeUpload
             uploadedFiles={uploadedResumes}

@@ -1,15 +1,38 @@
-import React from "react";
+import React, { useState } from "react";
 import { FileText } from "../../ui/icons";
 
-interface JobDescriptionInputProps {
-  value: string;
-  onChange: (value: string) => void;
-}
+export const JobDescriptionInput: React.FC = () => {
+  const [value, setValue] = useState("");
+  const [loading, setLoading] = useState(false);
 
-export const JobDescriptionInput: React.FC<JobDescriptionInputProps> = ({
-  value,
-  onChange,
-}) => {
+  const handleSubmit = async () => {
+    if (!value.trim()) {
+      alert("Please enter a job description before uploading.");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      // Create a fake file from the textarea text
+      const textFile = new Blob([value], { type: "text/plain" });
+      const formData = new FormData();
+      formData.append("jd", textFile, "job_description.txt");
+
+      const res = await fetch("http://localhost:5000/upload-jd", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await res.json();
+      alert(data.message || "Uploaded successfully!");
+    } catch (err) {
+      console.error("Error uploading JD:", err);
+      alert("Failed to upload JD. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div
       style={{
@@ -20,6 +43,7 @@ export const JobDescriptionInput: React.FC<JobDescriptionInputProps> = ({
         transition: "all 0.3s ease",
       }}
     >
+      {/* Header */}
       <div
         style={{
           display: "flex",
@@ -57,24 +81,51 @@ export const JobDescriptionInput: React.FC<JobDescriptionInputProps> = ({
           </p>
         </div>
       </div>
-      <textarea
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder="Paste your job description here... Include required skills, experience level, and key responsibilities."
+
+      {/* Dashed box with textarea */}
+      <div
         style={{
-          width: "100%",
-          height: "160px",
-          padding: "16px",
-          border: "1px solid #e5e7eb",
+          border: "2px dashed #d1d5db",
           borderRadius: "12px",
-          resize: "none",
-          color: "#374151",
-          fontSize: "14px",
-          outline: "none",
-          transition: "all 0.2s ease",
-          boxSizing: "border-box",
+          padding: "24px",
+          transition: "border-color 0.3s ease",
         }}
-      />
+      >
+        <textarea
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          placeholder="Paste your job description here..."
+          style={{
+            width: "100%",
+            height: "120px",
+            padding: "16px",
+            border: "none",
+            outline: "none",
+            resize: "none",
+            color: "#374151",
+            fontSize: "14px",
+            background: "transparent",
+          }}
+        />
+      </div>
+
+      {/* Upload button */}
+      <button
+        onClick={handleSubmit}
+        disabled={loading}
+        style={{
+          marginTop: "16px",
+          padding: "10px 20px",
+          backgroundColor: loading ? "#d1d5db" : "#a855f7",
+          color: "white",
+          borderRadius: "8px",
+          border: "none",
+          cursor: loading ? "not-allowed" : "pointer",
+          transition: "background-color 0.2s ease",
+        }}
+      >
+        {loading ? "Uploading..." : "Upload Job Description"}
+      </button>
     </div>
   );
 };
