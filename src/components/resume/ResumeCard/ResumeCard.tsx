@@ -1,6 +1,6 @@
 import React from "react";
 import { ResumeMatch } from "../../../types/ResumeMatch";
-import { Star, Clock } from "../../ui/icons";
+import { Star } from "../../ui/icons";
 import { Button } from "../../ui/Button/Button";
 
 interface ResumeCardProps {
@@ -15,11 +15,14 @@ export const ResumeCard: React.FC<ResumeCardProps> = ({
   onToggleSelection,
 }) => {
   const getScoreColor = (score: number) => {
-    if (score >= 90) return { color: "#10b981", backgroundColor: "#f0fdf4" };
-    if (score >= 80) return { color: "#3b82f6", backgroundColor: "#eff6ff" };
-    if (score >= 70) return { color: "#f59e0b", backgroundColor: "#fffbeb" };
+    if (score >= 0.9) return { color: "#10b981", backgroundColor: "#f0fdf4" };
+    if (score >= 0.8) return { color: "#3b82f6", backgroundColor: "#eff6ff" };
+    if (score >= 0.7) return { color: "#f59e0b", backgroundColor: "#fffbeb" };
     return { color: "#ef4444", backgroundColor: "#fef2f2" };
   };
+
+  // Convert match_score to percentage (0.98 -> 98%)
+  const scorePercentage = Math.round(resume.match_score * 100);
 
   return (
     <div
@@ -85,7 +88,7 @@ export const ResumeCard: React.FC<ResumeCardProps> = ({
               </h4>
               <div
                 style={{
-                  ...getScoreColor(resume.score),
+                  ...getScoreColor(resume.match_score),
                   padding: "4px 12px",
                   borderRadius: "9999px",
                   fontSize: "14px",
@@ -96,25 +99,27 @@ export const ResumeCard: React.FC<ResumeCardProps> = ({
                 }}
               >
                 <Star style={{ width: "16px", height: "16px" }} />
-                <span>{resume.score}% Match</span>
+                <span>{scorePercentage}% Match</span>
               </div>
             </div>
+
             <p
               style={{
                 color: "#4b5563",
                 marginBottom: "12px",
                 margin: "0 0 12px 0",
+                fontSize: "16px",
+                fontWeight: "500",
               }}
             >
-              {resume.title}
+              {resume.jd_title}
             </p>
+
             <div
               style={{
                 display: "flex",
-                alignItems: "center",
-                gap: "16px",
-                fontSize: "14px",
-                color: "#6b7280",
+                flexDirection: "column",
+                gap: "8px",
                 marginBottom: "16px",
               }}
             >
@@ -122,88 +127,86 @@ export const ResumeCard: React.FC<ResumeCardProps> = ({
                 style={{
                   display: "flex",
                   alignItems: "center",
-                  gap: "4px",
+                  gap: "8px",
+                  fontSize: "14px",
+                  color: "#6b7280",
                 }}
               >
-                <Clock style={{ width: "16px", height: "16px" }} />
-                <span>{resume.experience}</span>
+                <span style={{ fontWeight: "500", color: "#374151" }}>✉️</span>
+                <span>{resume.email}</span>
               </div>
-            </div>
-            <div
-              style={{
-                display: "flex",
-                flexWrap: "wrap",
-                gap: "8px",
-                marginBottom: "16px",
-              }}
-            >
-              {resume.skills.map((skill, index) => (
-                <span
-                  key={index}
+
+              {resume.phone && resume.phone !== "Not Found" && (
+                <div
                   style={{
-                    padding: "4px 12px",
-                    backgroundColor: "#dbeafe",
-                    color: "#1e40af",
-                    borderRadius: "9999px",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px",
                     fontSize: "14px",
-                    fontWeight: "500",
+                    color: "#6b7280",
                   }}
                 >
-                  {skill}
-                </span>
-              ))}
+                  <span style={{ fontWeight: "500", color: "#374151" }}>
+                    📞
+                  </span>
+                  <span>{resume.phone}</span>
+                </div>
+              )}
+
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
+                  fontSize: "14px",
+                  color: "#6b7280",
+                }}
+              >
+                <span style={{ fontWeight: "500", color: "#374151" }}>🆔</span>
+                <span>ID: {resume.id}</span>
+              </div>
             </div>
-            <div>
+
+            {/* Placeholder for skills - you can add this data later */}
+            <div
+              style={{
+                padding: "12px",
+                backgroundColor: "#f9fafb",
+                borderRadius: "8px",
+                border: "1px solid #e5e7eb",
+              }}
+            >
               <p
                 style={{
                   fontSize: "14px",
                   fontWeight: "500",
                   color: "#374151",
-                  marginBottom: "4px",
+                  margin: "0 0 8px 0",
                 }}
               >
-                Key Highlights:
+                Position: {resume.jd_title}
               </p>
-              <ul
+              <p
                 style={{
-                  fontSize: "14px",
-                  color: "#4b5563",
+                  fontSize: "12px",
+                  color: "#6b7280",
                   margin: 0,
-                  padding: 0,
-                  listStyle: "none",
                 }}
               >
-                {resume.highlights.map((highlight, index) => (
-                  <li
-                    key={index}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "8px",
-                      marginBottom: "4px",
-                    }}
-                  >
-                    <div
-                      style={{
-                        width: "6px",
-                        height: "6px",
-                        backgroundColor: "#3b82f6",
-                        borderRadius: "50%",
-                        flexShrink: 0,
-                      }}
-                    />
-                    <span>{highlight}</span>
-                  </li>
-                ))}
-              </ul>
+                Match Score: {scorePercentage}% compatibility with job
+                requirements
+              </p>
             </div>
           </div>
         </div>
+
         <div
           style={{
             display: "flex",
-            alignItems: "center",
-            gap: "12px",
+            flexDirection: "column",
+            alignItems: "stretch",
+            gap: "8px",
+            minWidth: "120px",
           }}
         >
           <Button variant="outline" size="sm">

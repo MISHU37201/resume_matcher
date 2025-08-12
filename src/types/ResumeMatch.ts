@@ -1,11 +1,10 @@
 export interface ResumeMatch {
   id: number;
   name: string;
-  score: number;
-  skills: string[];
-  experience: string;
-  title: string;
-  highlights: string[];
+  email: string;
+  phone: string;
+  jd_title: string;
+  match_score: number; // This comes as 0.98, 0.97, etc.
 }
 
 export interface FilterOptions {

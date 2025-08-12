@@ -1,9 +1,13 @@
 import { useState, useCallback } from "react";
 import { ResumeMatch } from "../types/ResumeMatch";
+import { ResumeMatcherAPI } from "../services/api";
 
 export const useResumeMatching = () => {
   const [matchedResumes, setMatchedResumes] = useState<ResumeMatch[]>([]);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+
+  // Create API instance
+  const api = new ResumeMatcherAPI(); // Uses default http://localhost:5000
 
   /**
    * Analyze resumes for a given job description ID and optional uploaded resumes.
@@ -16,38 +20,31 @@ export const useResumeMatching = () => {
       setIsAnalyzing(true);
 
       try {
-        // Create FormData to send jd_id and resumes if any
-        const formData = new FormData();
+        console.log(
+          "Analyzing resumes with JD ID:",
+          jdId,
+          "Files count:",
+          resumes.length
+        );
 
-        formData.append("jd_id", String(jdId)); // always send as string
+        // Use the API class method
+        const candidates = await api.matchResumesByJdId(jdId, resumes);
 
-        // Append resume files only if provided
-        resumes.forEach((file) => {
-          formData.append("resumes", file, file.name);
-        });
+        console.log("API returned candidates:", candidates);
+        console.log("Candidates count:", candidates.length);
 
-        // Send POST request to your Flask backend
-        const response = await fetch("http://localhost:5000/match", {
-          method: "POST",
-          body: formData,
-        });
-
-        if (!response.ok) {
-          throw new Error(`Server error: ${response.statusText}`);
-        }
-
-        const data = await response.json();
-
-        // Assuming backend returns: { matched_candidates: ResumeMatch[] }
-        setMatchedResumes(data.matched_candidates || []);
+        setMatchedResumes(candidates);
       } catch (error) {
         console.error("Error analyzing resumes:", error);
-        // Optional: set error state or show notification
+        setMatchedResumes([]); // Clear on error
+        const errorMessage =
+          error instanceof Error ? error.message : "An unknown error occurred";
+        alert(`Error analyzing resumes: ${errorMessage}`);
       } finally {
         setIsAnalyzing(false);
       }
     },
-    []
+    [api]
   );
 
   return {

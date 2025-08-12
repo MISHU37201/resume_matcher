@@ -93,7 +93,7 @@ const ResumeMatcherApp: React.FC = () => {
 
   // Filter matched resumes by score threshold
   const filteredMatches = matchedResumes.filter(
-    (resume) => resume.score >= filterScore
+    (resume) => resume.match_score >= filterScore
   );
 
   return (
