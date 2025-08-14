@@ -209,11 +209,30 @@ export const ResumeCard: React.FC<ResumeCardProps> = ({
             minWidth: "120px",
           }}
         >
-          <Button variant="outline" size="sm">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() =>
+              window.open(
+                `http://localhost:5000/download/resumes/view/${resume.filename}`,
+                "_blank"
+              )
+            }
+          >
             View Resume
           </Button>
-          <Button variant="primary" size="sm">
-            Contact
+
+          <Button
+            variant="primary"
+            size="sm"
+            onClick={() =>
+              window.open(
+                `http://localhost:5000/download/resumes/download/${resume.filename}`,
+                "_blank"
+              )
+            }
+          >
+            Download
           </Button>
         </div>
       </div>

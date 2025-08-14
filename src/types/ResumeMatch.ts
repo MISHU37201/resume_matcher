@@ -4,7 +4,8 @@ export interface ResumeMatch {
   email: string;
   phone: string;
   jd_title: string;
-  match_score: number; // This comes as 0.98, 0.97, etc.
+  match_score: number;
+  filename: string; //used for resume view endpoint
 }
 
 export interface FilterOptions {

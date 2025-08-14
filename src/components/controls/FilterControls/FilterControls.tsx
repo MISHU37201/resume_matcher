@@ -1,21 +1,17 @@
 import React from "react";
 import { Filter, Download } from "../../ui/icons";
-import { Button } from "../../ui/Button/Button";
 
 interface FilterControlsProps {
   filteredCount: number;
   selectedCount: number;
   filterScore: number;
   onFilterChange: (score: number) => void;
-  onDownloadSelected: () => void;
 }
 
 export const FilterControls: React.FC<FilterControlsProps> = ({
   filteredCount,
-  selectedCount,
   filterScore,
   onFilterChange,
-  onDownloadSelected,
 }) => {
   return (
     <div
@@ -78,15 +74,6 @@ export const FilterControls: React.FC<FilterControlsProps> = ({
             </select>
           </div>
         </div>
-        <Button
-          variant="secondary"
-          size="md"
-          disabled={selectedCount === 0}
-          onClick={onDownloadSelected}
-        >
-          <Download style={{ width: "20px", height: "20px" }} />
-          <span>Download Selected ({selectedCount})</span>
-        </Button>
       </div>
     </div>
   );

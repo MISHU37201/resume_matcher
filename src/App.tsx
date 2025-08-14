@@ -17,6 +17,7 @@ const ResumeMatcherApp: React.FC = () => {
   const [uploadedJdId, setUploadedJdId] = useState<string | null>(null); // <-- JD ID after upload
   const [uploadedResumes, setUploadedResumes] = useState<File[]>([]);
   const [selectedResumes, setSelectedResumes] = useState(new Set<number>());
+  
   const [filterScore, setFilterScore] = useState(0);
 
   // Custom hooks
@@ -184,7 +185,7 @@ const ResumeMatcherApp: React.FC = () => {
               selectedCount={selectedResumes.size}
               filterScore={filterScore}
               onFilterChange={setFilterScore}
-              onDownloadSelected={handleDownloadSelected}
+
             />
             <ResumeList
               resumes={filteredMatches}
